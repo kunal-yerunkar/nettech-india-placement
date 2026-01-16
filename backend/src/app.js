@@ -10,6 +10,8 @@ import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Security Headers
 app.use(helmet({
   contentSecurityPolicy: {
@@ -67,8 +69,8 @@ app.use(mongoSanitize()); // Prevent NoSQL injection
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
@@ -83,12 +85,12 @@ app.use('/api/admin', adminRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
+
   const isProduction = process.env.NODE_ENV === 'production';
-  
+
   res.status(err.status || 500).json({
-    message: isProduction 
-      ? 'An error occurred. Please try again later.' 
+    message: isProduction
+      ? 'An error occurred. Please try again later.'
       : err.message,
     ...(isProduction ? {} : { stack: err.stack })
   });
