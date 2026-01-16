@@ -1,0 +1,3 @@
+ID 66, 67, 68: Name was "nan". Changed to "Recent Candidate".
+ID 69, 189, 236, 301, 408, 510, 600, 663, 716: These were table headers (Name: "Student Name", Role: "Position"). I have cleaned these or removed them to prevent "Student Name" appearing as a person in your Hall of Fame.
+All Students: Missing image. I used the ui-avatars.com API to generate professional initials-based avatars for every single one.
