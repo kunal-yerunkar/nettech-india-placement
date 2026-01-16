@@ -1,4 +1,14 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const resolveApiBaseUrl = () => {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (typeof process !== 'undefined' && process.env && process.env.VITE_API_BASE_URL) {
+    return process.env.VITE_API_BASE_URL;
+  }
+  return 'http://localhost:5000/api';
+};
+
+export const API_BASE_URL = resolveApiBaseUrl();
 export const DOMAIN_CLUSTERS = {
   DATA: [1, 11], // Data Science, Finance Analyst
   CYBER_NETWORK: [2, 3, 7], // Cyber Security, Cloud, Networking
