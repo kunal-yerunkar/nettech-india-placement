@@ -38,7 +38,7 @@ const Hero = () => {
         <div className="md:w-1/2 relative mb-10 md:mb-0 animate-fade-in-up delay-500">
           <div className="relative animate-float">
             <img
-              src="../images/web img/21976.svg"
+              src="/images/web img/21976.svg"
               alt="Students collaborating"
               className="rounded-2xl bg-white dark:bg-opacity-95 shadow-2xl w-full object-cover h-80 md:h-[510px]"
             />
