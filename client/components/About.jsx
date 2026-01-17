@@ -19,7 +19,7 @@ const About = () => {
         {/* Better Image as per instruction */}
         <div className="mb-20 rounded-[2.5rem] overflow-hidden shadow-2xl hover:shadow-blue-500/10 transition-shadow duration-500 reveal active border border-gray-100 dark:border-white/5">
           <img
-            src="images\web img\As a Parent Company.jpg"
+            src="/images/web img/As a Parent Company.jpg"
             alt="NetTech India Team"
             className="w-full h-64 md:h-96 object-cover transform hover:scale-105 transition-transform duration-700"
           />
