@@ -21,7 +21,7 @@ const Features = () => {
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2">
               <img
-                src="images\web img\Why Choose Us.svg"
+                src="/images/web img/Why Choose Us.svg"
                 alt="Students succeeding"
                 className="rounded-[3rem] shadow-2xl w-full object-cover h-[450px] hover:shadow-blue-500/10 transition-shadow duration-300 border-8 border-gray-50 dark:border-gray-800"
               />
