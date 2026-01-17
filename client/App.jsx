@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import TestInteractive from './pages/TestInteractive';
 import { ThemeProvider } from './context/ThemeContext';
 import Preloader from './components/Preloader';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </ThemeProvider>
   );
 }
