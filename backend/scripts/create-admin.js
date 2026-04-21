@@ -25,7 +25,7 @@ async function createAdmin() {
     await Admin.deleteOne({ username });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await Admin.create({
+    await Admin.wcreate({
       username,
       password: hashedPassword
     });
