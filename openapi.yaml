@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: NetTech API
+  version: 1.0.0
+  description: OpenAPI spec derived from the existing backend. Kept minimal for migration and compatibility.
+servers:
+  - url: http://localhost:5000/api
+security:
+  - bearerAuth: []
+paths:
+  /auth/login:
+    post:
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required: [username, password]
+      responses:
+        '200':
+          description: Returns an access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+  /records/{key}:
+    get:
+      summary: Get records by key (public)
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Array of records
+    post:
+      summary: Create or update a record (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: success
+    delete:
+      summary: Delete a record by key and id (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+  /content/{key}:
+    get:
+      summary: Get content by key
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: content
+  /schemas/{type}:
+    get:
+      summary: Get form schema by type
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: schema fields
+    post:
+      summary: Create or update form schema (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: {}
+      responses:
+        '200':
+          description: success
+  /leads/{type}:
+    post:
+      summary: Submit a lead (student|partner|inquiry)
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [student, partner, inquiry]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: success with id
+  /admin/leads/{type}:
+    get:
+      summary: Admin: list leads by type
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: list of leads
+  /admin/activity-logs:
+    get:
+      summary: Admin: query activity logs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: resourceType
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: paginated logs
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Lead:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+        timestamp:
+          type: string
+        payload:
+          type: object
+    Record:
+      type: object
+      properties:
+        key:
+          type: string
+        data:
+          type: object
+    FormSchema:
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: array
+          items: {}
+    ActivityLog:
+      type: object
+      properties:
+        adminId:
+          type: string
+        action:
+          type: string
+        resourceType:
+          type: string
+        resourceId:
+          type: string
+        status:
+          type: string

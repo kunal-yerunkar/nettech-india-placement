@@ -1,0 +1,37 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+backend/.env
+client/.env
+client/.env.production
+client/.env.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+DB Id =kunalnettechindia_db_user
+DB Password =AZ7FhGY28ZzeEFIM
+mongodb+srv://kunalnettechindia_db_user:AZ7FhGY28ZzeEFIM@cluster0.m2wsu5n.mongodb.net/?appName=Cluster0
