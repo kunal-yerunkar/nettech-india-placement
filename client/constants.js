@@ -1088,3 +1088,41 @@ export const FAQS = [
     answer: "We partner with over 4,500 companies, including top MNCs, mid-sized tech firms, and startups across various industries."
   }
 ];
+
+export const GEO_DATA = {
+  "Andaman and Nicobar Islands": ["Port Blair", "Diglipur"],
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat"],
+  "Assam": ["Guwahati", "Silchar", "Nagaon", "Dibrugarh"],
+  "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Durg", "Bilaspur"],
+  "Dadra and Nagar Haveli": ["Silvassa", "Dadra"],
+  "Daman and Diu": ["Daman", "Diu"],
+  "Delhi": ["New Delhi", "Delhi", "Dwarka", "Rohini", "South Delhi"],
+  "Goa": ["Panaji", "Margao", "Mapusa"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar", "Jamnagar"],
+  "Haryana": ["Faridabad", "Gurgaon", "Hisar", "Rohtak", "Panipat", "Karnal"],
+  "Himachal Pradesh": ["Shimla", "Solan", "Kangra", "Mandi"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Giridih", "Bokaro"],
+  "Karnataka": ["Bangalore", "Mysore", "Mangalore", "Hubli", "Belgaum", "Davanagere"],
+  "Kerala": ["Kochi", "Thiruvananthapuram", "Kozhikode", "Thrissur", "Alappuzha"],
+  "Ladakh": ["Leh", "Kargil"],
+  "Lakshadweep": ["Kavaratti"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Aurangabad", "Nashik", "Solapur"],
+  "Manipur": ["Imphal", "Bishnupur"],
+  "Meghalaya": ["Shillong", "Tura"],
+  "Mizoram": ["Aizawl", "Lunglei"],
+  "Nagaland": ["Kohima", "Dimapur"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Sambalpur"],
+  "Puducherry": ["Puducherry", "Yanam", "Mahe", "Karaikal"],
+  "Punjab": ["Amritsar", "Ludhiana", "Chandigarh", "Jalandhar", "Patiala"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer", "Bikaner"],
+  "Sikkim": ["Gangtok", "Geyzing"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem", "Tiruppur", "Erode"],
+  "Telangana": ["Hyderabad", "Secunderabad", "Warangal", "Nizamabad"],
+  "Tripura": ["Agartala", "Udaipur"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut", "Noida"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Udham Singh Nagar"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Kharagpur"]
+};

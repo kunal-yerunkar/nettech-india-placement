@@ -7,7 +7,7 @@ import { Lead } from '../src/models/Lead.js';
 import { FormSchema } from '../src/models/FormSchema.js';
 import { Content } from '../src/models/Content.js';
 import { Admin } from '../src/models/Admin.js';
-import { PLACED_STUDENTS, JOB_DOMAINS, COLLEGE_LIST, PROCESS_STEPS, FAQS, WHY_CHOOSE_US, CHALLENGES, PARTNER_BENEFITS } from './seedConstants.js';
+import { PLACED_STUDENTS, JOB_DOMAINS, COLLEGE_LIST, PROCESS_STEPS, FAQS, WHY_CHOOSE_US, CHALLENGES, PARTNER_BENEFITS, GEO_DATA } from './seedConstants.js';
 
 dotenv.config();
 
@@ -43,7 +43,8 @@ const seedDatabase = async () => {
       { key: 'nt_content_faqs', data: FAQS },
       { key: 'nt_content_why_choose', data: WHY_CHOOSE_US },
       { key: 'nt_content_challenges', data: CHALLENGES },
-      { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS }
+      { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS },
+      { key: 'nt_geo_data', data: GEO_DATA }
     ];
     await Content.insertMany(contentToSeed);
     console.log('Content hub initialized.');

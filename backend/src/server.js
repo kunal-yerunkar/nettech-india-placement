@@ -9,7 +9,7 @@ import { Record } from './models/Record.js';
 import { FormSchema } from './models/FormSchema.js';
 import { Content } from './models/Content.js';
 import { Lead } from './models/Lead.js';
-import { PLACED_STUDENTS, JOB_DOMAINS, PROCESS_STEPS, FAQS, WHY_CHOOSE_US, CHALLENGES, PARTNER_BENEFITS } from '../scripts/seedConstants.js';
+import { PLACED_STUDENTS, JOB_DOMAINS, PROCESS_STEPS, FAQS, WHY_CHOOSE_US, CHALLENGES, PARTNER_BENEFITS, GEO_DATA } from '../scripts/seedConstants.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -33,7 +33,8 @@ const resetAndBootstrap = async () => {
     { key: 'nt_content_faqs', data: FAQS },
     { key: 'nt_content_why_choose', data: WHY_CHOOSE_US },
     { key: 'nt_content_challenges', data: CHALLENGES },
-    { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS }
+    { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS },
+    { key: 'nt_geo_data', data: GEO_DATA }
   ];
   await Content.insertMany(contentToSeed);
   const defaultSchemas = [
@@ -71,7 +72,8 @@ const bootstrapIfEmpty = async () => {
       { key: 'nt_content_faqs', data: FAQS },
       { key: 'nt_content_why_choose', data: WHY_CHOOSE_US },
       { key: 'nt_content_challenges', data: CHALLENGES },
-      { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS }
+      { key: 'nt_content_partner_benefits', data: PARTNER_BENEFITS },
+      { key: 'nt_geo_data', data: GEO_DATA }
     ];
     await Content.insertMany(contentToSeed);
   }
