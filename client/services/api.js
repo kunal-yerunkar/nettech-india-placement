@@ -47,11 +47,29 @@ export const api = {
     try {
       return (await axios.post(`${BASE_URL}/leads/student`, data)).data;
     } catch (err) {
-      throw new Error(err.response?.data?.message || 'Uplink synchronization failed.');
+      const errors = err.response?.data?.errors;
+      const errorMsg = errors?.map(e => `${e.field}: ${e.message}`).join(', ') || err.response?.data?.message || 'Uplink synchronization failed.';
+      throw new Error(errorMsg);
     }
   },
-  registerPartner: async (data) => (await axios.post(`${BASE_URL}/leads/partner`, data)).data,
-  submitInquiry: async (data) => (await axios.post(`${BASE_URL}/leads/inquiry`, data)).data,
+  registerPartner: async (data) => {
+    try {
+      return (await axios.post(`${BASE_URL}/leads/partner`, data)).data;
+    } catch (err) {
+      const errors = err.response?.data?.errors;
+      const errorMsg = errors?.map(e => `${e.field}: ${e.message}`).join(', ') || err.response?.data?.message || 'Partner registration failed.';
+      throw new Error(errorMsg);
+    }
+  },
+  submitInquiry: async (data) => {
+    try {
+      return (await axios.post(`${BASE_URL}/leads/inquiry`, data)).data;
+    } catch (err) {
+      const errors = err.response?.data?.errors;
+      const errorMsg = errors?.map(e => `${e.field}: ${e.message}`).join(', ') || err.response?.data?.message || 'Submission failed';
+      throw new Error(errorMsg);
+    }
+  },
 
   // --- Auth ---
   adminLogin: async (creds) => {

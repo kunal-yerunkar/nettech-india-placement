@@ -22,7 +22,13 @@ const validateStudentLead = [
 
   body('phone')
     .trim()
-    .matches(/^[0-9\-\+\(\)]{10,15}$/).withMessage('Valid phone number is required'),
+    .custom(val => {
+      if (!val) return false; // Required for student
+      // Accept: pure digits (10-15)
+      const phoneRegex = /^[0-9]{10,15}$/;
+      return phoneRegex.test(val);
+    })
+    .withMessage('Valid phone number required (10-15 digits)'),
 
   body('highestQualification')
     .optional()
@@ -75,7 +81,13 @@ const validatePartnerLead = [
 
   body('phone')
     .trim()
-    .matches(/^[0-9\-\+\(\)]{10,15}$/).withMessage('Valid phone number is required'),
+    .custom(val => {
+      if (!val) return false; // Required for partner
+      // Accept: pure digits (10-15)
+      const phoneRegex = /^[0-9]{10,15}$/;
+      return phoneRegex.test(val);
+    })
+    .withMessage('Valid phone number required (10-15 digits)'),
 
   body('website')
     .optional()
@@ -97,7 +109,13 @@ const validateInquiry = [
   body('phone')
     .optional()
     .trim()
-    .matches(/^[0-9\-\+\(\)]{10,15}$/).withMessage('Valid phone number is required'),
+    .custom(val => {
+      if (!val) return true; // Optional, so empty is ok
+      // Accept: pure digits (10-15), or formatted with dashes/parentheses
+      const phoneRegex = /^[0-9]{10,15}$|^[\d\-\+\(\)\s]{10,20}$/;
+      return phoneRegex.test(val);
+    })
+    .withMessage('Valid phone number is required (10-15 digits)'),
 
   body('subject')
     .trim()
