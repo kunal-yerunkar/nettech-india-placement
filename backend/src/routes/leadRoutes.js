@@ -46,9 +46,15 @@ const validateStudentLead = [
 
   body('skills')
     .optional()
-    .isArray().withMessage('Skills must be an array')
-    .custom(arr => arr.every(s => typeof s === 'string' && s.length > 0 && s.length <= 100))
-    .withMessage('Each skill must be a non-empty string of max 100 characters')
+    .custom(val => {
+      // Accept either string or array
+      if (typeof val === 'string') return true; // "Python, Java" is valid
+      if (Array.isArray(val)) {
+        return val.every(s => typeof s === 'string' && s.length > 0 && s.length <= 100);
+      }
+      return false;
+    })
+    .withMessage('Skills must be a string or array of strings')
 ];
 
 const validatePartnerLead = [
