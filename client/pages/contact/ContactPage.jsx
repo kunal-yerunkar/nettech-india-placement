@@ -12,10 +12,10 @@ const ContactPage = () => {
     const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
 
     const phrases = [
-      "Secure Transmission Cycle",
-      "Mission Control Support",
-      "Global Gateway Interface",
-      "Strategic Link Activation"
+        "Secure Transmission Cycle",
+        "Mission Control Support",
+        "Global Gateway Interface",
+        "Strategic Link Activation"
     ];
 
     const inquirySubjects = [
@@ -30,7 +30,7 @@ const ContactPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         const interval = setInterval(() => {
-          setActivePhraseIndex((prev) => (prev + 1) % phrases.length);
+            setActivePhraseIndex((prev) => (prev + 1) % phrases.length);
         }, 3000);
 
         const loadSchema = async () => {
@@ -59,6 +59,18 @@ const ContactPage = () => {
             setSubmitStatus({ type: 'error', message: 'Please select an Inquiry Subject.' });
             return;
         }
+        if (!formData.name.trim()) {
+            setSubmitStatus({ type: 'error', message: 'Please enter your name.' });
+            return;
+        }
+        if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
+            setSubmitStatus({ type: 'error', message: 'Please enter a valid email.' });
+            return;
+        }
+        if (formData.message.trim().length < 10) {
+            setSubmitStatus({ type: 'error', message: 'Message must be at least 10 characters.' });
+            return;
+        }
         setIsSubmitting(true);
         try {
             await api.submitInquiry(formData);
@@ -66,10 +78,10 @@ const ContactPage = () => {
             const resetState = { name: '', phone: '', email: '', subject: '', message: '' };
             formSchema.forEach(f => resetState[f.name] = '');
             setFormData(resetState);
-        } catch (error) { 
-            setSubmitStatus({ type: 'error', message: error.message || 'Transmission Interrupted.' }); 
-        } finally { 
-            setIsSubmitting(false); 
+        } catch (error) {
+            setSubmitStatus({ type: 'error', message: error.message || 'Transmission Interrupted.' });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -101,33 +113,33 @@ const ContactPage = () => {
 
                         {/* --- HQ MAP MARKER --- */}
                         <div className="bg-white dark:bg-[#0a111f] rounded-[2rem] md:rounded-[3rem] border border-gray-100 dark:border-white/5 p-4 overflow-hidden shadow-2xl reveal active">
-                           <div className="relative w-full aspect-video md:aspect-square lg:aspect-auto lg:h-[400px] rounded-[1.5rem] overflow-hidden group border border-gray-100 dark:border-white/10">
-                              <iframe 
-                                src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=NetTech%20India%2C%20102%2C%20Ratnamani%20Building%2C%20Dada%20Patil%20Wadi%2C%20Opp%20ICICI%20ATM%2C%20Near%20Platform%20No.1%2C%20Thane%20West+(NetTech%20India)&t=&z=16&ie=UTF8&iwloc=B&output=embed"
-                                className="absolute inset-0 w-full h-full border-0 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                                title="NetTech India Office Location"
-                                allowFullScreen="" 
-                                loading="lazy" 
-                                referrerPolicy="no-referrer-when-downgrade"
-                              ></iframe>
-                              <div className="absolute bottom-4 right-4 z-10">
-                                 <a 
-                                  href="https://maps.app.goo.gl/5vcvVtxJMhz5UwEP9" 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl hover:bg-blue-700 transition-all active:scale-95 border border-blue-500"
-                                 >
-                                    Verify Location <ExternalLink className="w-3.5 h-3.5" />
-                                 </a>
-                              </div>
-                           </div>
-                           <div className="mt-6 px-4 pb-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
-                                <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest">Marked: Suite 203, Ratnamani Building</p>
-                              </div>
-                              <p className="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest ml-4">LANDMARK: NAUPADA, THANE WEST</p>
-                           </div>
+                            <div className="relative w-full aspect-video md:aspect-square lg:aspect-auto lg:h-[400px] rounded-[1.5rem] overflow-hidden group border border-gray-100 dark:border-white/10">
+                                <iframe
+                                    src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=NetTech%20India%2C%20102%2C%20Ratnamani%20Building%2C%20Dada%20Patil%20Wadi%2C%20Opp%20ICICI%20ATM%2C%20Near%20Platform%20No.1%2C%20Thane%20West+(NetTech%20India)&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+                                    className="absolute inset-0 w-full h-full border-0 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                                    title="NetTech India Office Location"
+                                    allowFullScreen=""
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                ></iframe>
+                                <div className="absolute bottom-4 right-4 z-10">
+                                    <a
+                                        href="https://maps.app.goo.gl/5vcvVtxJMhz5UwEP9"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl hover:bg-blue-700 transition-all active:scale-95 border border-blue-500"
+                                    >
+                                        Verify Location <ExternalLink className="w-3.5 h-3.5" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div className="mt-6 px-4 pb-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
+                                    <p className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest">Marked: Suite 203, Ratnamani Building</p>
+                                </div>
+                                <p className="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest ml-4">LANDMARK: NAUPADA, THANE WEST</p>
+                            </div>
                         </div>
                     </div>
 

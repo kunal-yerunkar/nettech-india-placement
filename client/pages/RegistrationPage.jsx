@@ -93,15 +93,23 @@ const RegistrationPage = () => {
 
     const profileStrength = useMemo(() => {
         if (!formData.interestedDomain) return 0;
-        if (formData.skills.length === 0) return 10;
+        if (!formData.skills || formData.skills.length === 0) return 10;
+
         const clusterDomainIds = activeCluster ? domainClusters[activeCluster] : [];
+        if (!clusterDomainIds || clusterDomainIds.length === 0) return 15; // Domain selected but no cluster found
+
         const clusterSkills = new Set();
-        jobDomains.filter(d => clusterDomainIds.includes(d.id)).forEach(d => {
-            d.skills.forEach(s => clusterSkills.add(s.toLowerCase()));
-            d.roles.forEach(r => r.skills.forEach(rs => clusterSkills.add(rs.toLowerCase())));
-        });
-        const relevantCount = formData.skills.filter(s => clusterSkills.has(s.toLowerCase())).length;
-        const ratio = relevantCount / formData.skills.length;
+        jobDomains
+            .filter(d => clusterDomainIds.includes(d.id))
+            .forEach(d => {
+                if (d.skills) d.skills.forEach(s => clusterSkills.add(s.toLowerCase()));
+                if (d.roles) d.roles.forEach(r => {
+                    if (r.skills) r.skills.forEach(rs => clusterSkills.add(rs.toLowerCase()));
+                });
+            });
+
+        const relevantCount = formData.skills.filter(s => s && clusterSkills.has(s.toLowerCase())).length;
+        const ratio = formData.skills.length > 0 ? relevantCount / formData.skills.length : 0;
         let score = (relevantCount * 5) + (ratio * 40);
         return Math.min(100, Math.floor(score));
     }, [formData.skills, formData.interestedDomain, activeCluster, jobDomains, domainClusters]);
