@@ -46,7 +46,7 @@ app.use('/api/', limiter);
 app.use('/api/auth/login', authLimiter);
 
 // CORS Configuration
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://nettech-india-placement.vercel.app';
 const isProduction = process.env.NODE_ENV === 'production';
 
 const allowedOrigins = CLIENT_ORIGIN.split(',').map(o => o.trim());
