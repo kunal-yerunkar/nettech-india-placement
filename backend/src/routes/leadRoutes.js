@@ -137,7 +137,7 @@ router.post('/:type', validateLeadType, async (req, res, next) => {
 
     await newLead.save();
     console.log(`[LEAD ROUTE] ✅ ${type} lead saved: ${newLead.id}`);
-    
+
     res.json({ success: true, id: newLead.id });
   } catch (error) {
     console.error(`[LEAD ROUTE] ❌ Error:`, error.message);
