@@ -24,9 +24,10 @@ const validateStudentLead = [
     .trim()
     .custom(val => {
       if (!val) return false; // Required for student
-      // Accept: pure digits (10-15)
+      // Clean phone number and validate
+      const cleanedPhone = val.replace(/[\s\-\(\)\+]/g, '');
       const phoneRegex = /^[0-9]{10,15}$/;
-      return phoneRegex.test(val);
+      return phoneRegex.test(cleanedPhone);
     })
     .withMessage('Valid phone number required (10-15 digits)'),
 
@@ -83,9 +84,10 @@ const validatePartnerLead = [
     .trim()
     .custom(val => {
       if (!val) return false; // Required for partner
-      // Accept: pure digits (10-15)
+      // Clean phone number and validate
+      const cleanedPhone = val.replace(/[\s\-\(\)\+]/g, '');
       const phoneRegex = /^[0-9]{10,15}$/;
-      return phoneRegex.test(val);
+      return phoneRegex.test(cleanedPhone);
     })
     .withMessage('Valid phone number required (10-15 digits)'),
 
@@ -110,10 +112,11 @@ const validateInquiry = [
     .optional()
     .trim()
     .custom(val => {
-      if (!val) return true; // Optional, so empty is ok
-      // Accept: pure digits (10-15), or formatted with dashes/parentheses
-      const phoneRegex = /^[0-9]{10,15}$|^[\d\-\+\(\)\s]{10,20}$/;
-      return phoneRegex.test(val);
+      if (!val || val === '') return true; // Optional, so empty is ok
+      // Accept: pure digits (10-15), or formatted with dashes/parentheses/spaces/plus
+      const cleanedPhone = val.replace(/[\s\-\(\)\+]/g, '');
+      const phoneRegex = /^[0-9]{10,15}$/;
+      return phoneRegex.test(cleanedPhone);
     })
     .withMessage('Valid phone number is required (10-15 digits)'),
 
@@ -132,6 +135,7 @@ const validateInquiry = [
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error('[VALIDATION ERROR]', errors.array());
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
@@ -141,39 +145,41 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Routes
-router.post(
-  '/:type',
-  validateLeadType,
-  (req, res, next) => {
-    const type = req.params.type;
+// Dynamic route handler that applies correct validation based on type
+router.post('/:type', validateLeadType, async (req, res, next) => {
+  const type = req.params.type;
 
-    // Choose validation based on type
-    let validationMiddlewares = [];
-    if (type === 'student') {
-      validationMiddlewares = validateStudentLead;
-    } else if (type === 'partner') {
-      validationMiddlewares = validatePartnerLead;
-    } else if (type === 'inquiry') {
-      validationMiddlewares = validateInquiry;
-    }
+  console.log(`[LEAD ROUTE] Processing ${type} submission`);
 
-    // Run validations sequentially using express-validator's built-in pattern
-    const executeValidations = async () => {
-      for (const middleware of validationMiddlewares) {
-        await new Promise((resolve) => {
-          middleware(req, res, (err) => resolve());
-        });
-      }
-    };
-
-    executeValidations().then(() => {
-      handleValidationErrors(req, res, () => {
-        handleLeadSubmission(req, res, next);
-      });
-    }).catch(next);
+  // Choose validation based on type
+  let validationMiddlewares = [];
+  if (type === 'student') {
+    validationMiddlewares = validateStudentLead;
+  } else if (type === 'partner') {
+    validationMiddlewares = validatePartnerLead;
+  } else if (type === 'inquiry') {
+    validationMiddlewares = validateInquiry;
   }
-);
+
+  // Run all validators
+  await Promise.all(
+    validationMiddlewares.map(validator => validator.run(req))
+  );
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error(`[VALIDATION ERROR] ${type}:`, errors.array());
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array().map(err => ({ field: err.param, message: err.msg }))
+    });
+  }
+
+  // All validations passed, proceed to save
+  await handleLeadSubmission(req, res, next);
+});
 
 async function handleLeadSubmission(req, res, next) {
   try {
