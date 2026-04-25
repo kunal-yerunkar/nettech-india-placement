@@ -1,5 +1,6 @@
 import express from 'express';
 import { body, param, validationResult } from 'express-validator';
+import mongoose from 'mongoose';
 import { Lead } from '../models/Lead.js';
 
 const router = express.Router();
@@ -101,6 +102,12 @@ router.post('/:type', validateLeadType, async (req, res, next) => {
 
     console.log(`[LEAD ROUTE] Processing ${type} submission with data:`, Object.keys(data));
 
+    // Check MongoDB connection
+    if (!require('mongoose').connection.readyState) {
+      console.error('[LEAD ROUTE] ❌ MongoDB not connected!');
+      return res.status(503).json({ success: false, message: 'Database connection not ready' });
+    }
+
     // Validate type
     const validTypes = ['student', 'partner', 'inquiry'];
     if (!validTypes.includes(type)) {
@@ -127,20 +134,27 @@ router.post('/:type', validateLeadType, async (req, res, next) => {
     }
 
     // Create and save the lead
+    const leadId = data.id || `NT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    console.log(`[LEAD ROUTE] Creating lead object with ID: ${leadId}`);
+
     const newLead = new Lead({
       type,
-      id: data.id || `NT-${Date.now()}`,
+      id: leadId,
       status: 'Pending',
       timestamp: new Date().toLocaleString(),
       payload: data
     });
 
-    await newLead.save();
-    console.log(`[LEAD ROUTE] ✅ ${type} lead saved: ${newLead.id}`);
+    console.log(`[LEAD ROUTE] Lead object created, attempting to save...`);
 
-    res.json({ success: true, id: newLead.id });
+    const savedLead = await newLead.save();
+    console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully! ID: ${savedLead.id}`);
+    res.json({ success: true, id: savedLead.id });
+
   } catch (error) {
-    console.error(`[LEAD ROUTE] ❌ Error:`, error.message);
+    console.error(`[LEAD ROUTE] ❌ Fatal error:`, error.message);
+    console.error(`[LEAD ROUTE] Error code:`, error.code);
+    console.error(`[LEAD ROUTE] Error name:`, error.name);
     res.status(500).json({ success: false, message: error.message });
   }
 });
