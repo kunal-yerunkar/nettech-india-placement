@@ -158,17 +158,16 @@ router.post(
       validationMiddlewares = validateInquiry;
     }
 
-    // Run all validations
-    Promise.all(
-      validationMiddlewares.map(middleware =>
-        new Promise((resolve, reject) => {
-          middleware(req, res, (err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        })
-      )
-    ).then(() => {
+    // Run validations sequentially using express-validator's built-in pattern
+    const executeValidations = async () => {
+      for (const middleware of validationMiddlewares) {
+        await new Promise((resolve) => {
+          middleware(req, res, (err) => resolve());
+        });
+      }
+    };
+
+    executeValidations().then(() => {
       handleValidationErrors(req, res, () => {
         handleLeadSubmission(req, res, next);
       });
@@ -180,6 +179,8 @@ async function handleLeadSubmission(req, res, next) {
   try {
     const { type } = req.params;
     const data = req.body;
+
+    console.log(`[LEAD SUBMISSION] Type: ${type}, Data keys:`, Object.keys(data));
 
     // Validate type
     const validTypes = ['student', 'partner', 'inquiry'];
@@ -211,9 +212,12 @@ async function handleLeadSubmission(req, res, next) {
       payload: data
     });
 
+    console.log(`[LEAD SUBMISSION] Saving lead with ID: ${newLead.id}`);
     await newLead.save();
+    console.log(`[LEAD SUBMISSION] ✅ Lead saved successfully: ${newLead.id}`);
     res.json({ success: true, id: newLead.id });
   } catch (error) {
+    console.error(`[LEAD SUBMISSION] ❌ Error saving lead:`, error.message);
     next(error);
   }
 }
