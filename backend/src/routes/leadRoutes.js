@@ -95,68 +95,88 @@ const validateInquiry = [
 ];
 
 // Simplified route handler - just save the data
-router.post('/:type', validateLeadType, async (req, res, next) => {
-  try {
+router.post('/:type',
+  validateLeadType,
+  (req, res, next) => {
     const type = req.params.type;
-    const data = req.body;
 
-    console.log(`[LEAD ROUTE] Processing ${type} submission with data:`, Object.keys(data));
+    // Apply appropriate validators based on type
+    let validators = [];
+    if (type === 'student') validators = validateStudentLead;
+    else if (type === 'partner') validators = validatePartnerLead;
+    else if (type === 'inquiry') validators = validateInquiry;
 
-    // Check MongoDB connection
-    if (!require('mongoose').connection.readyState) {
-      console.error('[LEAD ROUTE] ❌ MongoDB not connected!');
-      return res.status(503).json({ success: false, message: 'Database connection not ready' });
-    }
+    // Execute validators
+    return Promise.all(validators.map(validator => validator.run(req)))
+      .then(() => next())
+      .catch(next);
+  },
+  async (req, res, next) => {
+    try {
+      const type = req.params.type;
+      const data = req.body;
 
-    // Validate type
-    const validTypes = ['student', 'partner', 'inquiry'];
-    if (!validTypes.includes(type)) {
-      return res.status(400).json({ success: false, message: 'Invalid submission type' });
-    }
-
-    // Validate required data exists
-    if (!data || Object.keys(data).length === 0) {
-      return res.status(400).json({ success: false, message: 'Form data is required' });
-    }
-
-    // Check for duplicate student registrations by email or phone
-    if (type === 'student' && (data.email || data.phone)) {
-      const existing = await Lead.findOne({
-        type: 'student',
-        $or: [
-          data.email && { 'payload.email': data.email },
-          data.phone && { 'payload.phone': data.phone }
-        ].filter(Boolean)
-      });
-      if (existing) {
-        return res.status(400).json({ success: false, message: 'This email or phone is already registered' });
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
       }
+
+      console.log(`[LEAD ROUTE] Processing ${type} submission with data:`, Object.keys(data));
+
+      // Check MongoDB connection
+      if (!mongoose.connection.readyState) {
+        console.error('[LEAD ROUTE] ❌ MongoDB not connected!');
+        return res.status(503).json({ success: false, message: 'Database connection not ready' });
+      }
+
+      // Validate required data exists
+      if (!data || Object.keys(data).length === 0) {
+        return res.status(400).json({ success: false, message: 'Form data is required' });
+      }
+
+      // Check for duplicate student registrations by email or phone
+      if (type === 'student' && (data.email || data.phone)) {
+        const orConditions = [];
+        if (data.email) orConditions.push({ 'payload.email': data.email });
+        if (data.phone) orConditions.push({ 'payload.phone': data.phone });
+
+        if (orConditions.length > 0) {
+          const existing = await Lead.findOne({
+            type: 'student',
+            $or: orConditions
+          });
+          if (existing) {
+            return res.status(400).json({ success: false, message: 'This email or phone is already registered' });
+          }
+        }
+      }
+
+      // Create and save the lead
+      const leadId = `NT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      console.log(`[LEAD ROUTE] Creating lead object with ID: ${leadId}`);
+
+      const newLead = new Lead({
+        type,
+        id: leadId,
+        status: 'Pending',
+        timestamp: new Date().toLocaleString(),
+        payload: data
+      });
+
+      console.log(`[LEAD ROUTE] Lead object created, attempting to save...`);
+
+      const savedLead = await newLead.save();
+      console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully! ID: ${savedLead.id}`);
+      res.json({ success: true, id: savedLead.id });
+
+    } catch (error) {
+      console.error(`[LEAD ROUTE] ❌ Fatal error:`, error.message);
+      console.error(`[LEAD ROUTE] Error code:`, error.code);
+      console.error(`[LEAD ROUTE] Error name:`, error.name);
+      res.status(500).json({ success: false, message: error.message });
     }
-
-    // Create and save the lead
-    const leadId = data.id || `NT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log(`[LEAD ROUTE] Creating lead object with ID: ${leadId}`);
-
-    const newLead = new Lead({
-      type,
-      id: leadId,
-      status: 'Pending',
-      timestamp: new Date().toLocaleString(),
-      payload: data
-    });
-
-    console.log(`[LEAD ROUTE] Lead object created, attempting to save...`);
-
-    const savedLead = await newLead.save();
-    console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully! ID: ${savedLead.id}`);
-    res.json({ success: true, id: savedLead.id });
-
-  } catch (error) {
-    console.error(`[LEAD ROUTE] ❌ Fatal error:`, error.message);
-    console.error(`[LEAD ROUTE] Error code:`, error.code);
-    console.error(`[LEAD ROUTE] Error name:`, error.name);
-    res.status(500).json({ success: false, message: error.message });
   }
-});
+);
 
 export default router;
