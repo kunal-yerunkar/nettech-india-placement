@@ -94,33 +94,37 @@ const validateInquiry = [
     .trim()
 ];
 
+// Dynamic middleware to apply validators based on type
+const applyTypeValidators = async (req, res, next) => {
+  const type = req.params.type;
+  let validators = [];
+
+  if (type === 'student') validators = validateStudentLead;
+  else if (type === 'partner') validators = validatePartnerLead;
+  else if (type === 'inquiry') validators = validateInquiry;
+
+  // Run validators sequentially
+  for (const validator of validators) {
+    await validator.run(req);
+  }
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+
+  next();
+};
+
 // Simplified route handler - just save the data
 router.post('/:type',
   validateLeadType,
-  (req, res, next) => {
-    const type = req.params.type;
-
-    // Apply appropriate validators based on type
-    let validators = [];
-    if (type === 'student') validators = validateStudentLead;
-    else if (type === 'partner') validators = validatePartnerLead;
-    else if (type === 'inquiry') validators = validateInquiry;
-
-    // Execute validators
-    return Promise.all(validators.map(validator => validator.run(req)))
-      .then(() => next())
-      .catch(next);
-  },
-  async (req, res, next) => {
+  applyTypeValidators,
+  async (req, res) => {
     try {
       const type = req.params.type;
       const data = req.body;
-
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-      }
 
       console.log(`[LEAD ROUTE] Processing ${type} submission with data:`, Object.keys(data));
 
@@ -172,8 +176,7 @@ router.post('/:type',
 
     } catch (error) {
       console.error(`[LEAD ROUTE] ❌ Fatal error:`, error.message);
-      console.error(`[LEAD ROUTE] Error code:`, error.code);
-      console.error(`[LEAD ROUTE] Error name:`, error.name);
+      console.error(`[LEAD ROUTE] Error stack:`, error.stack);
       res.status(500).json({ success: false, message: error.message });
     }
   }

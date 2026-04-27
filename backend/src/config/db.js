@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/nettech_placement';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/test';
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Fail fast if MONGODB_URI is not set in production
