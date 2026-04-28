@@ -160,22 +160,38 @@ router.post('/:type',
       const leadId = `NT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       console.log(`[LEAD ROUTE] Creating lead object with ID: ${leadId}`);
 
-      const newLead = new Lead({
+      const leadPayload = {
         type,
         id: leadId,
         status: 'Pending',
         timestamp: new Date().toLocaleString(),
         payload: data
-      });
+      };
+
+      console.log(`[LEAD ROUTE] Lead payload:`, JSON.stringify(leadPayload, null, 2));
+
+      const newLead = new Lead(leadPayload);
 
       console.log(`[LEAD ROUTE] Lead object created, attempting to save...`);
+      console.log(`[LEAD ROUTE] MongoDB connection state: ${mongoose.connection.readyState}`);
 
-      const savedLead = await newLead.save();
-      console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully! ID: ${savedLead.id}`);
-      res.json({ success: true, id: savedLead.id });
+      try {
+        const savedLead = await newLead.save();
+        console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully!`);
+        console.log(`[LEAD ROUTE] Saved document:`, JSON.stringify(savedLead, null, 2));
+        res.json({ success: true, id: savedLead.id });
+      } catch (saveError) {
+        console.error(`[LEAD ROUTE] ❌ Save error:`, saveError.message);
+        console.error(`[LEAD ROUTE] Save error code:`, saveError.code);
+        console.error(`[LEAD ROUTE] Save error name:`, saveError.name);
+        console.error(`[LEAD ROUTE] Full error:`, JSON.stringify(saveError, null, 2));
+        throw saveError;
+      }
 
     } catch (error) {
       console.error(`[LEAD ROUTE] ❌ Fatal error:`, error.message);
+      console.error(`[LEAD ROUTE] Error code:`, error.code);
+      console.error(`[LEAD ROUTE] Error name:`, error.name);
       console.error(`[LEAD ROUTE] Error stack:`, error.stack);
       res.status(500).json({ success: false, message: error.message });
     }
