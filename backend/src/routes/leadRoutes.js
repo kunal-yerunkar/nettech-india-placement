@@ -180,7 +180,7 @@ router.post('/:type',
         console.log(`[LEAD ROUTE] Save operation completed`);
         console.log(`[LEAD ROUTE] Saved document ID: ${savedLead._id}`);
         console.log(`[LEAD ROUTE] Saved document custom ID: ${savedLead.id}`);
-        
+
         // Verify document was actually written to database
         const verification = await Lead.findById(savedLead._id);
         if (verification) {
