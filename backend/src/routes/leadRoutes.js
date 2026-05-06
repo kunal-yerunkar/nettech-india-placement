@@ -177,9 +177,19 @@ router.post('/:type',
 
       try {
         const savedLead = await newLead.save();
-        console.log(`[LEAD ROUTE] ✅ ${type} lead saved successfully!`);
-        console.log(`[LEAD ROUTE] Saved document:`, JSON.stringify(savedLead, null, 2));
-        res.json({ success: true, id: savedLead.id });
+        console.log(`[LEAD ROUTE] Save operation completed`);
+        console.log(`[LEAD ROUTE] Saved document ID: ${savedLead._id}`);
+        console.log(`[LEAD ROUTE] Saved document custom ID: ${savedLead.id}`);
+        
+        // Verify document was actually written to database
+        const verification = await Lead.findById(savedLead._id);
+        if (verification) {
+          console.log(`[LEAD ROUTE] ✅ VERIFIED: Document exists in database!`);
+          res.json({ success: true, id: savedLead.id });
+        } else {
+          console.error(`[LEAD ROUTE] ❌ VERIFICATION FAILED: Document not found after save!`);
+          res.status(500).json({ success: false, message: 'Document save verification failed' });
+        }
       } catch (saveError) {
         console.error(`[LEAD ROUTE] ❌ Save error:`, saveError.message);
         console.error(`[LEAD ROUTE] Save error code:`, saveError.code);
