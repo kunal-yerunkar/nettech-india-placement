@@ -9,7 +9,7 @@ const leadSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-// Create indexes
+// Create indexes for efficient querying
 leadSchema.index({ type: 1, status: 1 });
 leadSchema.index({ type: 1, 'payload.email': 1 });
 leadSchema.index({ type: 1, 'payload.phone': 1 });
