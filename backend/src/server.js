@@ -97,7 +97,15 @@ const bootstrapIfEmpty = async () => {
 const start = async () => {
   try {
     await connectDB();
-    console.log('NetTech Deployment Database Secured');
+    const dbName = mongoose.connection.name;
+    console.log(`NetTech Deployment Database Secured: ${dbName}`);
+
+    if (dbName === 'test') {
+      console.warn('⚠️ WARNING: You are connected to the default "test" database.');
+      console.warn('   If you do not see your data, check the "test" database in MongoDB Atlas.');
+      console.warn('   To use a specific database, append the name to your MONGODB_URI.');
+      console.warn('   Example: mongodb+srv://.../nettech_placement?retryWrites=true...');
+    }
 
     const isProduction = process.env.NODE_ENV === 'production';
     const shouldReset = process.env.RESET_DB === 'true' && process.env.RESET_CONFIRM === 'ERASE';

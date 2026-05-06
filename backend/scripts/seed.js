@@ -14,7 +14,12 @@ dotenv.config();
 const seedDatabase = async () => {
   try {
     await connectDB();
-    console.log('Uplink established. Beginning Master Hydration...');
+    const dbName = mongoose.connection.name;
+    console.log(`Uplink established to: ${dbName}. Beginning Master Hydration...`);
+
+    if (dbName === 'test') {
+      console.warn('⚠️ SEEDING INTO "test" DATABASE. Ensure this is where you want your data.');
+    }
 
     await Promise.all([
       Record.deleteMany({}),

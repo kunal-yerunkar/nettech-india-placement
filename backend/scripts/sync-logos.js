@@ -22,7 +22,8 @@ async function seedLogos() {
     if (!uri) throw new Error('MONGODB_URI is not defined in .env');
 
     await mongoose.connect(uri);
-    console.log('✅ Connected to MongoDB for Logo Sync');
+    const dbName = mongoose.connection.name;
+    console.log(`✅ Connected to MongoDB: ${dbName} for Logo Sync`);
 
     const files = fs.readdirSync(logoDir);
     const logos = files.filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.webp') || f.endsWith('.svg') || f.endsWith('.gif'));

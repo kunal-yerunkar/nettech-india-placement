@@ -16,7 +16,8 @@ async function createAdmin() {
     if (!uri) throw new Error('MONGODB_URI not defined');
 
     await mongoose.connect(uri);
-    console.log('✅ Connected to MongoDB');
+    const dbName = mongoose.connection.name;
+    console.log(`✅ Connected to MongoDB: ${dbName}`);
 
     const username = 'admin';
     const password = 'admin123';
@@ -25,7 +26,7 @@ async function createAdmin() {
     await Admin.deleteOne({ username });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await Admin.wcreate({
+    await Admin.create({
       username,
       password: hashedPassword
     });

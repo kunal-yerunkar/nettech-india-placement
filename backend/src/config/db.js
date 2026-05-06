@@ -23,8 +23,10 @@ const RETRY_DELAY = 5000; // 5 seconds
 export const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, connectionOptions);
-    console.log('✅ MongoDB connected successfully');
-    
+    const dbName = mongoose.connection.name;
+    const dbHost = mongoose.connection.host;
+    console.log(`✅ MongoDB connected successfully to: ${dbHost}/${dbName}`);
+
     mongoose.connection.on('error', (err) => {
       console.error('MongoDB connection error:', err);
     });
@@ -43,7 +45,7 @@ export const connectDB = async () => {
     return mongoose.connection;
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error.message);
-    
+
     if (retryCount < MAX_RETRIES) {
       retryCount++;
       console.log(`Retrying connection (${retryCount}/${MAX_RETRIES})...`);
