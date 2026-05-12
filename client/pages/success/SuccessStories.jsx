@@ -5,6 +5,7 @@ import SuccessHero from './SuccessHero';
 import SuccessPlacementGrid from './SuccessPlacementGrid';
 import SuccessReelsSection from './SuccessReelsSection';
 import SuccessFeaturedSection from './SuccessFeaturedSection';
+import { PLACED_STUDENTS as FALLBACK_STUDENTS } from '../../data/successData';
 
 const SuccessStories = () => {
   const [visibleCount, setVisibleCount] = useState(20);
@@ -27,12 +28,26 @@ const SuccessStories = () => {
     }, 3000);
 
     const loadData = async () => {
-      const reelsData = await api.getReels();
-      const studentsData = await api.getStudents();
+      try {
+        const [reelsData, studentsData] = await Promise.all([
+          api.getReels().catch(() => []),
+          api.getStudents().catch(() => [])
+        ]);
 
-      const sortedReels = [...reelsData].sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
-      setReels(sortedReels);
-      setStudents(studentsData);
+        const sortedReels = Array.isArray(reelsData) 
+          ? [...reelsData].sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99))
+          : [];
+        setReels(sortedReels);
+        
+        const finalStudents = Array.isArray(studentsData) && studentsData.length > 0 
+          ? studentsData 
+          : FALLBACK_STUDENTS;
+        setStudents(finalStudents);
+      } catch (error) {
+        console.warn('Success stories API unavailable, using fallback:', error.message);
+        setStudents(FALLBACK_STUDENTS);
+        setReels([]);
+      }
     };
     loadData();
 

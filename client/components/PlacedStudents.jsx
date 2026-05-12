@@ -2,14 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Calendar, Trophy, Layers, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { PLACED_STUDENTS as FALLBACK_STUDENTS } from '../data/successData';
 
 const PlacedStudents = () => {
   const [students, setStudents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const data = await api.getStudents();
-      setStudents(data);
+      try {
+        const data = await api.getStudents();
+        if (data && data.length > 0) {
+          setStudents(data);
+        } else {
+          setStudents(FALLBACK_STUDENTS);
+        }
+      } catch (error) {
+        console.warn('API unavailable, using fallback data:', error.message);
+        setStudents(FALLBACK_STUDENTS);
+      } finally {
+        setIsLoading(false);
+      }
     };
     load();
   }, []);

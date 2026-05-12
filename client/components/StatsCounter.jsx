@@ -4,19 +4,28 @@ import { api } from '../services/api';
 
 const StatsCounter = () => {
     const [counts, setCounts] = useState({ students: 0, partners: 0, rate: 98, domains: 0 });
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
-            const students = await api.getStudents();
-            const partners = await api.getPartners();
-            const domains = await api.getDomains();
+            try {
+                const [studentsRes, partnersRes, domainsRes] = await Promise.all([
+                    api.getStudents().catch(() => []),
+                    api.getPartners().catch(() => []),
+                    api.getDomains().catch(() => [])
+                ]);
 
-            setCounts({
-                students: students.length,
-                partners: partners.length,
-                rate: 98,
-                domains: domains.length
-            });
+                setCounts({
+                    students: Array.isArray(studentsRes) ? studentsRes.length : 0,
+                    partners: Array.isArray(partnersRes) ? partnersRes.length : 0,
+                    rate: 98,
+                    domains: Array.isArray(domainsRes) ? domainsRes.length : 0
+                });
+            } catch (error) {
+                console.warn('Stats API unavailable:', error.message);
+            } finally {
+                setIsLoading(false);
+            }
         };
         fetchStats();
     }, []);

@@ -3,6 +3,7 @@ import { api } from '../services/api';
 import { Search, ArrowRight, BookOpen, Briefcase, CheckCircle, Sparkles, Zap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Modal from './Modal';
+import { JOB_DOMAINS } from '../constants';
 
 const Domains = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,8 +14,17 @@ const Domains = () => {
 
   useEffect(() => {
     const load = async () => {
-      const data = await api.getDomains();
-      setDomains(data);
+      try {
+        const data = await api.getDomains();
+        if (data && data.length > 0) {
+          setDomains(data);
+        } else {
+          setDomains(JOB_DOMAINS);
+        }
+      } catch (error) {
+        console.warn('Domains API unavailable, using fallback:', error.message);
+        setDomains(JOB_DOMAINS);
+      }
     };
     load();
   }, []);

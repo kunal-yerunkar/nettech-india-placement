@@ -26,7 +26,7 @@ export const connectDB = async () => {
     const dbName = mongoose.connection.name;
     const dbHost = mongoose.connection.host;
     console.log(`✅ MongoDB connected successfully to: ${dbHost}/${dbName}`);
-
+    
     mongoose.connection.on('error', (err) => {
       console.error('MongoDB connection error:', err);
     });
@@ -45,7 +45,7 @@ export const connectDB = async () => {
     return mongoose.connection;
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error.message);
-
+    
     if (retryCount < MAX_RETRIES) {
       retryCount++;
       console.log(`Retrying connection (${retryCount}/${MAX_RETRIES})...`);
