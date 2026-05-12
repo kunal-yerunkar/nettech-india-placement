@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config(); // Must be called before any other imports that use process.env
 
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import app from './app.js';
 import { connectDB } from './config/db.js';
